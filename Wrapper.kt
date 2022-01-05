@@ -454,7 +454,6 @@ data class NewebpayOption(
     private fun tradeInfoAES(info: NewebpayTradeInfo): String {
         val tradeInfoMap = Properties.encodeToMap(info)
         val query = HttpUtil.http_build_query(tradeInfoMap)
-        println("QUERY BUILT: ${query}")
         return encryptHelper.encrypt(query)
     }
 
@@ -465,8 +464,7 @@ data class NewebpayOption(
     fun getData(tradeInfo: NewebpayTradeInfo): NewebpayMPGData {
         val aes256 = tradeInfoAES(tradeInfo)
         val sha256 = tradeInfoSha(aes256)
-        // println("AES256: ${aes256}")
-        // println("SHA256: ${sha256}")
+
         return NewebpayMPGData(merchantId, aes256, sha256, version).apply {
             setEncryptType(encryptType)
         }
@@ -474,11 +472,6 @@ data class NewebpayOption(
 
     fun getHttpForm(data: NewebpayMPGData): String {
         val parameterMap = Properties.encodeToMap(data).toMutableMap()
-
-        // println("PARAMETER MAP: ${parameterMap.entries}")
-
-        // parameterMap.remove("TradeInfo")
-        // parameterMap["TradeInfo"] = ""
 
         return listOf(
             "<form id='newebpay' method='post' action='${gatewayURL}' style=\"display:none;\">",
@@ -516,7 +509,6 @@ object HttpUtil {
         try {
             reString = URLEncoder.encode(reString, "utf-8")
         } catch (e: UnsupportedEncodingException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
         }
         reString = reString!!.replace("%3D", "=").replace("%26", "&")
